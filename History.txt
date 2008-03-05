@@ -1,8 +1,12 @@
-== 1.0.9 2007-01-11
+== 1.0.9 2008-03-05
+
+* Add: cut long words
+
+== 1.0.9 2008-01-11
 
 * Solve: remove all html tags
 
-== 1.0.8 2007-01-11
+== 1.0.8 2008-01-11
 
 * Add: alias Entry.url for Entry.link 
 
