@@ -14,15 +14,6 @@ module Rfeedreader
   
   class TextyHelper
     
-    def TextyHelper.split_str(str, len = 10)
-      if str !~ /http:\/\//
-        fragment = /.{#{len}}/
-        str.split(/(\s+)/).map! { |word|
-          (/\s/ === word) ? word : word.gsub(fragment, '\0<wbr />')
-        }.join
-      end
-    end
-    
     def TextyHelper.clean(text, length)
       return text if text.empty?
       
@@ -222,7 +213,6 @@ module Rfeedreader
     
     TITLE_LENGTH = 45
     DESCRIPTION_LENGTH = 250
-    WORD_LENGTH = 10
     
     def initialize(item, charset)
       @hpricot_item = item
@@ -268,10 +258,6 @@ module Rfeedreader
         truncate_length = DESCRIPTION_LENGTH
         truncate_length = Rfeedreader::DESCRIPTION_LENGTH if Rfeedreader.const_defined? "DESCRIPTION_LENGTH"
         
-        
-        word_length = WORD_LENGTH
-        word_length = Rfeedreader::WORD_LENGTH if Rfeedreader.const_defined? "WORD_LENGTH"
-        
         @description = TextyHelper.clean(@description, truncate_length)
         @description = TextyHelper.convertEncoding(@description, @charset)
         
@@ -282,7 +268,6 @@ module Rfeedreader
         @description.gsub!(/((https?):\/\/([^\/]+)\/(\S*))/, '[<a href=\'\1\'>link</a>]')
         @description.strip!
         
-        @description = TextyHelper.split_str(@description, word_length)
       end
     end
     
@@ -368,10 +353,9 @@ module Rfeedreader
     return read_feed(uri, parse_entries=false)
   end
   
-  def set_truncate_length(title = -1, description = -1, word_length = -1)
+  def set_truncate_length(title = -1, description = -1)
     const_set("TITLE_LENGTH", title)
     const_set("DESCRIPTION_LENGTH", description)
-    const_set("WORD_LENGTH", word_length)
   end
 
   def open_doc(link)

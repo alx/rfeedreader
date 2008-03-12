@@ -244,7 +244,6 @@ class TestRfeedreader < Test::Unit::TestCase
   end
   
   def test_maria
-    read_first "http://www.arfues.net/weblog/author/arnauh/feed"
-    read_first "http://elsantacrucenio.com/index.php?option=com_rss&feed=rss0.91&no_html=1"
+    read_first "http://unamiradadesdeelsur.wordpress.com/"
   end
 end
