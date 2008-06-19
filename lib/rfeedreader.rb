@@ -110,14 +110,13 @@ module Rfeedreader
   end
   
   class Feed
-    attr_accessor :feed_url, :title, :link, :charset, :entries
+    attr_accessor :feed_url, :title, :link, :charset, :entries, :is_mrss
     
     def initialize(link, hpricot_doc)
       @feed_url = link
-      read_title hpricot_doc
-      read_link hpricot_doc
-      read_charset hpricot_doc
       @entries = []
+      
+      read_header hpricot_doc
     end
     
     def parse_entries(hpricot_doc, nb_posts=10)
@@ -126,21 +125,27 @@ module Rfeedreader
       
       # Parse each item
       (hpricot_doc/"item|entry")[0..nb_posts - 1].each do |item|
-        case type
-          when "source_flickr"
-            @entries<<Entry_Flickr.new(item, self.charset)
-          when "source_fotolog"
-            @entries<<Entry_Fotolog.new(item, self.charset)
-          when "source_google_video"
-            @entries<<Entry_Google_Video.new(item, self.charset)
-          when "source_jumpcut"
-            @entries<<Entry_Jumpcut.new(item, self.charset)
-          when "source_picasa"
-            @entries<<Entry_Picasa.new(item, self.charset)
-          when "source_youtube"
-            @entries<<Entry_Youtube.new(item, self.charset)
-          else
-            @entries<<Entry.new(item, self.charset)
+        
+        if @is_mrss
+          puts "is_mrss"
+          @entries<<Entry_MRSS.new(item, self.charset)
+        else
+          case type
+            when "source_flickr"
+              @entries<<Entry_Flickr.new(item, self.charset)
+            when "source_fotolog"
+              @entries<<Entry_Fotolog.new(item, self.charset)
+            when "source_google_video"
+              @entries<<Entry_Google_Video.new(item, self.charset)
+            when "source_jumpcut"
+              @entries<<Entry_Jumpcut.new(item, self.charset)
+            when "source_picasa"
+              @entries<<Entry_Picasa.new(item, self.charset)
+            when "source_youtube"
+              @entries<<Entry_Youtube.new(item, self.charset)
+            else
+                @entries<<Entry.new(item, self.charset)
+            end
         end
       end
     end
@@ -163,9 +168,22 @@ module Rfeedreader
     
     protected
     
+    def read_header(hpricot_doc)
+      read_title hpricot_doc
+      read_link hpricot_doc
+      read_charset hpricot_doc
+      read_mrss hpricot_doc
+    end
+    
+    def read_mrss(hpricot_doc)
+      media = hpricot_doc.to_s.scan(/xmlns:media=['"]?([^'"]*)['" ]/)
+      media *= "" if media.is_a? Array
+      @is_mrss = media == "http://search.yahoo.com/mrss/"
+    end
+    
     def read_charset(hpricot_doc)
       @charset = hpricot_doc.to_s.scan(/encoding=['"]?([^'"]*)['" ]/)
-      @charset = @charset[0] if @charset.is_a? Array
+      @charset *= "" if @charset.is_a? Array
       @charset = @charset.to_s.downcase
       @charset = 'utf-8' if @charset.empty?
     end
@@ -273,6 +291,13 @@ module Rfeedreader
     
     def to_s
       "Entry: title: #{@title} - link: #{@url}\n\rdescription: #{@description}"
+    end
+  end
+
+  class Entry_MRSS<Entry
+    def read_description
+      image = @hpricot_item.search("media:thumbnail").to_s.scan(/url=['"]?([^'"]*)['" ]/).to_s
+      @description = "<a href='#{@link}' class='image_link'><img src='#{image}' class='post_image'/></a>"
     end
   end
   
