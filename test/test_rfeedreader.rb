@@ -244,7 +244,7 @@ class TestRfeedreader < Test::Unit::TestCase
   end
   
   def test_maria
-    read_first "http://unamiradadesdeelsur.wordpress.com/"
+    read_first "http://www.riberadelhuerva.com/Blog/"
   end
   
   def test_mrss

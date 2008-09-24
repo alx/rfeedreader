@@ -1,3 +1,7 @@
+== 1.0.14 2008-09-24
+
+* Solve: Entry link on blogspot
+
 == 1.0.13 2008-06-19
 
 * Add: MRSS support

@@ -244,7 +244,7 @@ module Rfeedreader
     # Return the rss item link
     def read_link
       @link = nil
-      if link = (@hpricot_item/"link")[0]
+      if link = (@hpricot_item/"link[@rel='alternate']")[0] || (@hpricot_item/"link")[0]
         @link = link.to_s.scan(/(http:\/\/.[^<\"]*)/).to_s
       end
     end
@@ -290,7 +290,7 @@ module Rfeedreader
     end
     
     def to_s
-      "Entry: title: #{@title} - link: #{@url}\n\rdescription: #{@description}"
+      "Entry: title: #{@title} - link: #{@link}\n\rdescription: #{@description}"
     end
   end
 
