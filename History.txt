@@ -1,3 +1,7 @@
+== 1.0.15 2008-10-18
+
+* Solve: Convert html to number only (avoid IE &apos; problem)
+
 == 1.0.14 2008-09-24
 
 * Solve: Entry link on blogspot

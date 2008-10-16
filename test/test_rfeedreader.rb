@@ -146,7 +146,7 @@ class TestRfeedreader < Test::Unit::TestCase
   end
   
   def test_read_deugarte
-    read_first "http://www.deugarte.com/feed"
+    read_first "http://deugarte.com/"
   end
   
   def test_read_blogspot

@@ -26,7 +26,7 @@ module Rfeedreader
         text.gsub!(/<!--(.*?)-->[\n]?/m, "")
       end
       text.gsub!(/\s{2,}|\n|\t/, ' ')
-      truncate(HTMLEntities.encode_entities(text, :named, :decimal), length) 
+      truncate(HTMLEntities.encode_entities(text, :decimal), length) 
     end
 
     def TextyHelper.truncate(text="", length = 0, truncate_string = "...")
