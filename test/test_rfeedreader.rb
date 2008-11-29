@@ -250,4 +250,24 @@ class TestRfeedreader < Test::Unit::TestCase
   def test_mrss
     read_first "http://www.mariabonitacoisas.com.br/home/rss/mrss"
   end
+  
+  def test_cocomment
+    read_first "http://www.cocomment.com/blog/2720"
+  end
+  
+  def test_commentlink
+    read_first "http://acariciandolaanguila.blogspot.com/"
+  end
+  
+  def test_orlandooo
+    read_first "http://orlandooo.com/blog/"
+  end
+  
+  def test_juan
+    read_first "http://juan.urrutiaelejalde.org"
+  end
+  
+  def test_wordpress
+    read_first "http://argentin.wordpress.com/"
+  end
 end

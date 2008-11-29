@@ -125,27 +125,22 @@ module Rfeedreader
       
       # Parse each item
       (hpricot_doc/"item|entry")[0..nb_posts - 1].each do |item|
-        
-        if @is_mrss
-          puts "is_mrss"
-          @entries<<Entry_MRSS.new(item, self.charset)
-        else
-          case type
-            when "source_flickr"
-              @entries<<Entry_Flickr.new(item, self.charset)
-            when "source_fotolog"
-              @entries<<Entry_Fotolog.new(item, self.charset)
-            when "source_google_video"
-              @entries<<Entry_Google_Video.new(item, self.charset)
-            when "source_jumpcut"
-              @entries<<Entry_Jumpcut.new(item, self.charset)
-            when "source_picasa"
-              @entries<<Entry_Picasa.new(item, self.charset)
-            when "source_youtube"
-              @entries<<Entry_Youtube.new(item, self.charset)
-            else
-                @entries<<Entry.new(item, self.charset)
-            end
+      
+        case type
+          when "source_flickr"
+            @entries<<Entry_Flickr.new(item, self.charset)
+          when "source_fotolog"
+            @entries<<Entry_Fotolog.new(item, self.charset)
+          when "source_google_video"
+            @entries<<Entry_Google_Video.new(item, self.charset)
+          when "source_jumpcut"
+            @entries<<Entry_Jumpcut.new(item, self.charset)
+          when "source_picasa"
+            @entries<<Entry_Picasa.new(item, self.charset)
+          when "source_youtube"
+            @entries<<Entry_Youtube.new(item, self.charset)
+          else
+              @entries<<Entry.new(item, self.charset)
         end
       end
     end
@@ -194,6 +189,8 @@ module Rfeedreader
       rescue
         @title = ""
       end
+      
+      @title = @feed_url.gsub("http://", "").gsub(/\/.*/, "") if @title.empty?
     end
     
     def read_link(hpricot_doc)
@@ -266,7 +263,10 @@ module Rfeedreader
       @description = (@hpricot_item/"content").text
       @description = (@hpricot_item/"content\:encoded").text if @description.empty?
       if @description.empty?
+        puts "content not found"
         @description = (@hpricot_item/"description|summary|[@type='text']").inner_html
+        
+          puts "inner_html: #{@description}"
         @description.gsub!(/^<!\[CDATA\[/, '')
         @description.gsub!(/\]\]>$/, '')
         @description = HTMLEntities.decode_entities(@description)
@@ -291,13 +291,6 @@ module Rfeedreader
     
     def to_s
       "Entry: title: #{@title} - link: #{@link}\n\rdescription: #{@description}"
-    end
-  end
-
-  class Entry_MRSS<Entry
-    def read_description
-      image = @hpricot_item.search("media:thumbnail").to_s.scan(/url=['"]?([^'"]*)['" ]/).to_s
-      @description = "<a href='#{@link}' class='image_link'><img src='#{image}' class='post_image'/></a>"
     end
   end
   
